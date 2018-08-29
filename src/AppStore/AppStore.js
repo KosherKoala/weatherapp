@@ -1,4 +1,10 @@
-import mobx, {observable, action, toJS, extendObservable} from 'mobx';
+// Hunter Figueroa
+// New Relic Code Challenge
+// 2018 8 28
+//
+// Mobx AppStore/Data layer, contains most of site data and methods, and all API calls
+
+import mobx, {observable, action, toJS} from 'mobx';
 import moment from 'moment';
 
 export default class AppStore{
@@ -124,13 +130,16 @@ export default class AppStore{
         var avgH = 0, avgL = 0;
 
         var count = 0;
+        // Iterate through all raw day data
         for (var data in toJS(this.chartData)) {
             if (this.chartData.hasOwnProperty(data)) {
+                // Add Data and wipe record at end of each week
                 if(count == 7){
+                    // Calc average High
                     if(weeklyTotalH !== 0){
                         avgH = Math.floor(weeklyTotalH/7);
                         this.displayData[0].data[weekStart] = avgH;
-                        
+                        // Min and Max for graph bounds
                         if(min > avgH){
                             min = avgH;
                         }
@@ -138,11 +147,12 @@ export default class AppStore{
                             max = avgH;
                         }
                     }
-
+                    // Calc average Low
                     if(weeklyTotalL !== 0){
                         avgL = Math.floor(weeklyTotalL/7);
                         this.displayData[1].data[weekStart] = avgL;
-
+                        
+                        // Min and Max for graph bounds
                         if(min > avgL){
                             min = avgL;
                         }
@@ -150,13 +160,12 @@ export default class AppStore{
                             max = avgL;
                         }
                     }
-                    
+                    // Wipe
                     weeklyTotalH = 0;
                     weeklyTotalL = 0;
-                    
                     count = 0;
-                   // console.log(toJS(this.displayData))
                 }
+                // Set the week start
                 if(count == 0){
                     weekStart = data;
                 }
@@ -180,28 +189,28 @@ export default class AppStore{
                 count++;
             }
         }
-      //  console.log("MINMAX", min, max)
+        // Set Graph bounds
         this.chartOptions.min = min - 5;
         this.chartOptions.max = max + 5;
     }
 
     @action
     displayMonthly(min, max, tempH, tempL){
-        // console.log("Weekly")
-        var monthlyTotalH = 0;
-        var monthlyTotalL = 0;
-        var monthStart = null;
-        var monthEnd = null;
+        var monthlyTotalH = 0, monthlyTotalL = 0;
+        var monthStart = null, monthEnd = null;
          
         var count = 0;
+        // Iterate through all raw day data
         for (var data in toJS(this.chartData)) {
             if (this.chartData.hasOwnProperty(data)) {
+                // End and start dates
                 if(count ==0){
                     monthStart = data;
                 }
                 if(count == 29){
                     monthEnd = data;
                 }
+
                 // Grab all F temperatures
                 if(this.mode == "F"){
                     //Grab High
@@ -222,7 +231,7 @@ export default class AppStore{
                 count++;
             }
         }
-        console.log("Monthly:", monthlyTotalH, monthlyTotalL)
+        // Calcualte Monthly Average - If the total was 0 then dont add data to the graph
         var avgh, avgL;
         if(monthlyTotalH !== 0){
             var avgH = Math.floor(monthlyTotalH/30);
@@ -241,20 +250,17 @@ export default class AppStore{
             avgL = 0;
         }
         
-        console.log(avgL, avgH)
+        // Find min and max for graph bounds
         if( monthlyTotalH !== 0 && monthlyTotalL !== 0){
-            console.log("Both here")
             this.chartOptions.min = avgL - 5;
             this.chartOptions.max = avgH + 5;
         }
         else{
             if(monthlyTotalL === 0 && monthlyTotalH !== 0){
-                console.log("HERE")
                 this.chartOptions.min = avgH - 5;
                 this.chartOptions.max = avgH + 5;
             }
             else if(monthlyTotalH === 0 && monthlyTotalL !== 0){
-                console.log("HERE")
                 this.chartOptions.min = avgL - 5;
                 this.chartOptions.max = avgL + 5;
             }
@@ -263,10 +269,9 @@ export default class AppStore{
                 this.chartOptions.max = -10;
             }
         }
-        console.log("Options", toJS(this.chartOptions))
     }
 
-     // Options 
+    // Options 
     @observable
     mode = "F";
     
