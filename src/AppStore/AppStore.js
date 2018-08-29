@@ -124,12 +124,12 @@ export default class AppStore{
 
     @action
     displayWeekly(min, max, tempH, tempL){
-       // console.log("Weekly")
+        
         var weeklyTotalH =0, weeklyTotalL = 0;
         var weekStart = null;
         var avgH = 0, avgL = 0;
-
         var count = 0;
+
         // Iterate through all raw day data
         for (var data in toJS(this.chartData)) {
             if (this.chartData.hasOwnProperty(data)) {
