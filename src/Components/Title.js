@@ -5,9 +5,6 @@
 // Dynamic Title, adapts with user option choices in AppStore
 
 import React, { Component } from 'react';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-
-import mobx, {toJS} from 'mobx';
 import {observer} from 'mobx-react';
 
 @observer

@@ -6,8 +6,6 @@
 
 import React, { Component } from 'react';
 import {FormGroup, Input, Label} from 'reactstrap'
-
-import mobx, {toJS} from 'mobx';
 import {observer} from 'mobx-react';
 
 @observer

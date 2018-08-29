@@ -10,9 +10,10 @@ import React, { Component } from 'react';
 import ReactChartkick, { LineChart } from 'react-chartkick'
 import {Container, Row, Col,  Navbar, NavbarBrand} from 'reactstrap'
 import Chart from 'chart.js';
-import mobx, {toJS} from 'mobx';
+import {toJS} from 'mobx';
 import {observer} from 'mobx-react';
 
+// Store
 import AppStore from './AppStore/AppStore'
 
 //Components

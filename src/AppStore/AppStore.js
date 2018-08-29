@@ -4,7 +4,7 @@
 //
 // Mobx AppStore/Data layer, contains most of site data and methods, and all API calls
 
-import mobx, {observable, action, toJS} from 'mobx';
+import {observable, action, toJS} from 'mobx';
 import moment from 'moment';
 
 export default class AppStore{
@@ -53,12 +53,12 @@ export default class AppStore{
     displayDaily(min, max, tempH, tempL){
         var count = 0;
         for (var data in toJS(this.chartData)) {
-            if(count == 7){
+            if(count === 7){
                 break;
             }
             if (this.chartData.hasOwnProperty(data)) {
                 // Grab all F temperatures
-                if(this.mode == "F"){
+                if(this.mode === "F"){
                     //Grab High
                     tempH = this.chartData[data].high.f;
                     if(this.high){
@@ -124,8 +124,8 @@ export default class AppStore{
 
     @action
     displayWeekly(min, max, tempH, tempL){
-        
-        var weeklyTotalH =0, weeklyTotalL = 0;
+
+        var weeklyTotalH = 0, weeklyTotalL = 0;
         var weekStart = null;
         var avgH = 0, avgL = 0;
         var count = 0;
@@ -134,7 +134,7 @@ export default class AppStore{
         for (var data in toJS(this.chartData)) {
             if (this.chartData.hasOwnProperty(data)) {
                 // Add Data and wipe record at end of each week
-                if(count == 7){
+                if(count === 7){
                     // Calc average High
                     if(weeklyTotalH !== 0){
                         avgH = Math.floor(weeklyTotalH/7);
@@ -166,11 +166,11 @@ export default class AppStore{
                     count = 0;
                 }
                 // Set the week start
-                if(count == 0){
+                if(count === 0){
                     weekStart = data;
                 }
                 // Grab all F temperatures
-                if(this.mode == "F"){
+                if(this.mode === "F"){
                     //Grab High
                     if(this.high)
                         weeklyTotalH += this.chartData[data].high.f;
@@ -204,15 +204,15 @@ export default class AppStore{
         for (var data in toJS(this.chartData)) {
             if (this.chartData.hasOwnProperty(data)) {
                 // End and start dates
-                if(count ==0){
+                if(count === 0){
                     monthStart = data;
                 }
-                if(count == 29){
+                if(count === 29){
                     monthEnd = data;
                 }
 
                 // Grab all F temperatures
-                if(this.mode == "F"){
+                if(this.mode === "F"){
                     //Grab High
                     if(this.high)
                        monthlyTotalH += this.chartData[data].high.f;
@@ -232,17 +232,17 @@ export default class AppStore{
             }
         }
         // Calcualte Monthly Average - If the total was 0 then dont add data to the graph
-        var avgh, avgL;
+        var avgH, avgL;
         if(monthlyTotalH !== 0){
-            var avgH = Math.floor(monthlyTotalH/30);
+            avgH = Math.floor(monthlyTotalH/30);
             this.displayData[0].data[monthStart] = avgH;
             this.displayData[0].data[monthEnd] = avgH;
         }
         else{
-            avgh = 0;
+            avgH = 0;
         }
         if(monthlyTotalL !== 0){
-            var avgL = Math.floor(monthlyTotalL/30);
+            avgL = Math.floor(monthlyTotalL/30);
             this.displayData[1].data[monthStart] = avgL;
             this.displayData[1].data[monthEnd] = avgL;
         }

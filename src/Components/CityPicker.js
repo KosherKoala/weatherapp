@@ -4,10 +4,9 @@
 //
 // Displays and dropdown for cities in appstore
 
+// Plugins
 import React, { Component } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-
-import mobx, {toJS} from 'mobx';
 import {observer} from 'mobx-react';
 
 @observer
