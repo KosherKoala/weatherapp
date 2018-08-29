@@ -59,6 +59,11 @@ class WeatherApp extends Component {
           </Col>
         </Row> 
         <Row>
+          <Col className="d-flex">
+            {this.appStore.dataCounter < 30 ? <div className="d-flex mx-auto">Loading...</div> : null}
+          </Col>
+        </Row>
+        <Row>
           <Col>
             <LineChart data={toJS(this.appStore.displayData)} 
                         min = {toJS(this.appStore.chartOptions.min)} 
