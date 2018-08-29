@@ -15,6 +15,7 @@ export default class AppStore{
 
         // Bindings
         this.getChartData = this.getChartData.bind(this);
+        this.setDisplayData = this.setDisplayData.bind(this);
         this.setC = this.setC.bind(this);
         this.setF = this.setF.bind(this);
         this.toggleHigh = this.toggleHigh.bind(this);
@@ -43,80 +44,86 @@ export default class AppStore{
         var min = 9999999, max = -9999999;
         var tempH = null, tempL = null;
 
+        // Sort data by date
+        var chartData = toJS(this.chartData).sort((a,b)=>{
+            return new Date(b[0]) - new Date(a[0]);
+        })
+
         // Get Display depending on timespan
         if(this.timeSpan === "daily")
-            this.displayDaily(min, max, tempH, tempL);
+            this.displayDaily(min, max, tempH, tempL, chartData);
         else if(this.timeSpan === "weekly")
-            this.displayWeekly(min, max, tempH, tempL);
+            this.displayWeekly(min, max, tempH, tempL, chartData);
         else if(this.timeSpan === "monthly")
-            this.displayMonthly(min, max, tempH, tempL);
+            this.displayMonthly(min, max, tempH, tempL, chartData);
     }
-
     @action
-    displayDaily(min, max, tempH, tempL){
+    displayDaily(min, max, tempH, tempL, chartData){
         var count = 0;
-        for (var data in toJS(this.chartData)) {
+        for (var data of chartData) {
+            var date = data[0];
+            var dayData = data[1];
+
             if(count === 7){
                 break;
             }
-            if (this.chartData.hasOwnProperty(data)) {
-                // Grab all F temperatures
-                if(this.mode === "F"){
-                    //Grab High
-                    tempH = this.chartData[data].high.f;
-                    if(this.high){
-                        this.displayData[0].data[data] = tempH;
-                        // Min max Checker for bounds
-                        if(max < tempH){
-                            max = tempH;
-                        }
-                        if(min > tempH){
-                            min = tempH;
-                        }
-                    }
-                    
-                    // Grab Low
-                    tempL = this.chartData[data].low.f;
-                    if(this.low){
-                        this.displayData[1].data[data] = tempL;
-                        // Min max Checker for bounds
-                        if(max < tempL){
-                            max = tempL;
-                        }
-                        if(min > tempL){
-                            min = tempL;
-                        }
-                    }
+            //console.log("Daily Data", date, count, dayData)
+            // Grab all F temperatures
+            if(this.mode === "F"){
+                //Grab High
 
-                }
-                else{
-                    // Grab all C temperatures
-                    // Grab High
-                    tempH = this.chartData[data].high.c;
-                    if(this.high){
-                        this.displayData[0].data[data] = tempH;
-                        // Min max Checker for bounds
-                        if(max < tempH){
-                            max = tempH;
-                        }
-                        if(min > tempH){
-                            min = tempH;
-                        }
+                tempH = dayData.high.f;
+                if(this.high){
+                    this.displayData[0].data[date] = tempH;
+                    // Min max Checker for bounds
+                    if(max < tempH){
+                        max = tempH;
                     }
-                    //Grab Low
-                    tempL = this.chartData[data].low.c;
-                    if(this.low){
-                        this.displayData[1].data[data] = tempL;
-                        // Min max Checker for bounds
-                        if(max < tempL){
-                            max = tempL;
-                        }
-                        if(min > tempL){
-                            min = tempL;
-                        }
+                    if(min > tempH){
+                        min = tempH;
                     }
                 }
                 
+                // Grab Low
+                tempL = dayData.low.f;
+                if(this.low){
+                    this.displayData[1].data[date] = tempL;
+                    // Min max Checker for bounds
+                    if(max < tempL){
+                        max = tempL;
+                    }
+                    if(min > tempL){
+                        min = tempL;
+                    }
+                }
+
+            }
+            else{
+                // Grab all C temperatures
+                // Grab High
+                tempH = dayData.high.c;
+                if(this.high){
+                    this.displayData[0].data[date] = tempH;
+                    // Min max Checker for bounds
+                    if(max < tempH){
+                        max = tempH;
+                    }
+                    if(min > tempH){
+                        min = tempH;
+                    }
+                }
+                //Grab Low
+                tempL = dayData.low.c;
+                if(this.low){
+                    this.displayData[1].data[date] = tempL;
+                    // Min max Checker for bounds
+                    if(max < tempL){
+                        max = tempL;
+                    }
+                    if(min > tempL){
+                        min = tempL;
+                    }
+                }
             }
             count++;
         }
@@ -126,7 +133,7 @@ export default class AppStore{
     }
 
     @action
-    displayWeekly(min, max, tempH, tempL){
+    displayWeekly(min, max, tempH, tempL, chartData){
 
         var weeklyTotalH = 0, weeklyTotalL = 0;
         var weekStart = null;
@@ -134,63 +141,65 @@ export default class AppStore{
         var count = 0;
 
         // Iterate through all raw day data
-        for (var data in toJS(this.chartData)) {
-            if (this.chartData.hasOwnProperty(data)) {
-                // Add Data and wipe record at end of each week
-                if(count === 7){
-                    // Calc average High
-                    if(weeklyTotalH !== 0){
-                        avgH = Math.floor(weeklyTotalH/7);
-                        this.displayData[0].data[weekStart] = avgH;
-                        // Min and Max for graph bounds
-                        if(min > avgH){
-                            min = avgH;
-                        }
-                        if(max < avgH ){
-                            max = avgH;
-                        }
+        for (var data of chartData){
+
+            var date = data[0];
+            var dayData = data[1];
+            
+            // Add Data and wipe record at end of each week
+            if(count === 7){
+                // Calc average High
+                if(weeklyTotalH !== 0){
+                    avgH = Math.floor(weeklyTotalH/7);
+                    this.displayData[0].data[weekStart] = avgH;
+                    // Min and Max for graph bounds
+                    if(min > avgH){
+                        min = avgH;
                     }
-                    // Calc average Low
-                    if(weeklyTotalL !== 0){
-                        avgL = Math.floor(weeklyTotalL/7);
-                        this.displayData[1].data[weekStart] = avgL;
-                        
-                        // Min and Max for graph bounds
-                        if(min > avgL){
-                            min = avgL;
-                        }
-                        if(max < avgL ){
-                            max = avgL;
-                        }
+                    if(max < avgH ){
+                        max = avgH;
                     }
-                    // Wipe
-                    weeklyTotalH = 0;
-                    weeklyTotalL = 0;
-                    count = 0;
                 }
-                // Set the week start
-                if(count === 0){
-                    weekStart = data;
-                }
-                // Grab all F temperatures
-                if(this.mode === "F"){
-                    //Grab High
-                    if(this.high)
-                        weeklyTotalH += this.chartData[data].high.f;
+                // Calc average Low
+                if(weeklyTotalL !== 0){
+                    avgL = Math.floor(weeklyTotalL/7);
+                    this.displayData[1].data[weekStart] = avgL;
                     
-                    if(this.low)
-                        weeklyTotalL += this.chartData[data].low.f;
+                    // Min and Max for graph bounds
+                    if(min > avgL){
+                        min = avgL;
+                    }
+                    if(max < avgL ){
+                        max = avgL;
+                    }
                 }
-                else{
-                    // Grab all C temperatures
-                    if(this.high)
-                        weeklyTotalH += this.chartData[data].high.c;
-                    
-                    if(this.low)
-                        weeklyTotalL += this.chartData[data].low.c;
-                }
-                count++;
+                // Wipe
+                weeklyTotalH = 0;
+                weeklyTotalL = 0;
+                count = 0;
             }
+            // Set the week start
+            if(count === 0){
+                weekStart = date;
+            }
+            // Grab all F temperatures
+            if(this.mode === "F"){
+                //Grab High
+                if(this.high)
+                    weeklyTotalH += dayData.high.f;
+                
+                if(this.low)
+                    weeklyTotalL += dayData.low.f;
+            }
+            else{
+                // Grab all C temperatures
+                if(this.high)
+                    weeklyTotalH += dayData.high.c;
+                
+                if(this.low)
+                    weeklyTotalL += dayData.low.c;
+            }
+            count++;
         }
         // Set Graph bounds
         this.chartOptions.min = min - 5;
@@ -198,41 +207,42 @@ export default class AppStore{
     }
 
     @action
-    displayMonthly(min, max, tempH, tempL){
+    displayMonthly(min, max, tempH, tempL, chartData){
         var monthlyTotalH = 0, monthlyTotalL = 0;
         var monthStart = null, monthEnd = null;
          
         var count = 0;
         // Iterate through all raw day data
-        for (var data in toJS(this.chartData)) {
-            if (this.chartData.hasOwnProperty(data)) {
-                // End and start dates
-                if(count === 0){
-                    monthStart = data;
-                }
-                if(count === 29){
-                    monthEnd = data;
-                }
+        for (var data of chartData) {
+            var date = data[0];
+            var dayData = data[1];
 
-                // Grab all F temperatures
-                if(this.mode === "F"){
-                    //Grab High
-                    if(this.high)
-                       monthlyTotalH += this.chartData[data].high.f;
-                    
-                    if(this.low)
-                       monthlyTotalL += this.chartData[data].low.f;
-                }
-                else{
-                    // Grab all C temperatures
-                    if(this.high)
-                       monthlyTotalH += this.chartData[data].high.c;
-                    
-                    if(this.low)
-                       monthlyTotalL += this.chartData[data].low.c;
-                }
-                count++;
+            // End and start dates
+            if(count === 0){
+                monthStart = date;
             }
+            if(count === 29){
+                monthEnd = date;
+            }
+
+            // Grab all F temperatures
+            if(this.mode === "F"){
+                //Grab High
+                if(this.high)
+                    monthlyTotalH += dayData.high.f;
+                
+                if(this.low)
+                    monthlyTotalL += dayData.low.f;
+            }
+            else{
+                // Grab all C temperatures
+                if(this.high)
+                    monthlyTotalH += dayData.high.c;
+                
+                if(this.low)
+                    monthlyTotalL += dayData.low.c;
+            }
+            count++;
         }
         // Calcualte Monthly Average - If the total was 0 then dont add data to the graph
         var avgH, avgL;
@@ -276,6 +286,9 @@ export default class AppStore{
 
     // Options 
     @observable
+    dataCounter = 0;
+
+    @observable
     mode = "F";
     
     @observable
@@ -290,8 +303,10 @@ export default class AppStore{
 
     @action
     pickTime(time){
-        this.timeSpan = time;
-        this.setDisplayData();
+        if(this.timeSpan !== time){
+            this.timeSpan = time;
+            this.setDisplayData();
+        }
     }
 
     @action
@@ -299,26 +314,25 @@ export default class AppStore{
         if(this.mode !== "F"){
            // console.log("Setting f");
             this.mode = "F";
-            this.getChartData();
+            this.setDisplayData();
         }
     }
 
     @action 
     setC(){
-        console.log("Setting C");
+      //  console.log("Setting C");
         if(this.mode !== "C"){
             this.mode = "C";
-            this.getChartData();
+            this.setDisplayData();
         }
     }
-
-  
 
     @action 
     toggleHigh(){
         this.high = !this.high;
         this.setDisplayData();
     }
+
     @action 
     toggleLow(){
         this.low = !this.low;
@@ -341,8 +355,10 @@ export default class AppStore{
 
     @action
     setLocation(location){
-        this.currentLocation = location;
-        this.getChartData();
+        if(this.currentLocation !== location){
+            this.currentLocation = location;
+            this.getChartData();
+        }
     }
 
     // Day Range
@@ -360,8 +376,9 @@ export default class AppStore{
     // Weather API
     @action
     getChartData(){
-        this.chartData = {};
+        this.chartData = [];
         this.errorMsg = null;
+        this.dataCounter = 0;
         // Loop through all Days in range
 
         for(let day of toJS(this.dayRange)){
@@ -377,13 +394,16 @@ export default class AppStore{
                     }
                     else{
                         var dayData = data.forecast.forecastday[0].day;
-                        this.chartData[day] = {high:{f: dayData.maxtemp_f, c: dayData.maxtemp_c}, low:{f: dayData.mintemp_f, c: dayData.mintemp_c},};
-                        
-                        // Determine data to be displayed (avoids many API calls)
-                        this.setDisplayData();
+                        this.chartData.push([day ,{high:{f: dayData.maxtemp_f, c: dayData.maxtemp_c}, low:{f: dayData.mintemp_f, c: dayData.mintemp_c}}]);
+                       // console.log("ChartData:", toJS(this.chartData), this.dataCounter );
+                        this.dataCounter++;
+                        // Refresh UI only when all data aggregated
+                        if(this.dataCounter === 30){
+                            this.setDisplayData();
+                        }
                     }
-                });
-            }
+            });
+        }
     }
 
 }
