@@ -28,6 +28,7 @@ Below are the manual tests I performed:
         - Select each city and confirm data is correctly displayed in graph  
         - Select each city and confirm that all raw data is accountable/corrent for option updates  
         - Select each city and confirm that the button text is updated with new city name
+        - If error on data fetch (Out of bounds, network error), show error message and avoid rendering
         
 3. Option Updates   
     a. Option updates do not require server calls, they simply parse and reorganize the raw data from the initial API call   

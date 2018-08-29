@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 
 // Plugins
 import ReactChartkick, { LineChart } from 'react-chartkick'
-import {Container, Row, Col,  Navbar, NavbarBrand} from 'reactstrap'
+import {Container, Row, Col,  Navbar, NavbarBrand, Alert} from 'reactstrap'
 import Chart from 'chart.js';
 import {toJS} from 'mobx';
 import {observer} from 'mobx-react';
@@ -70,6 +70,9 @@ class WeatherApp extends Component {
             <HLPicker appStore ={this.appStore}/>
             <TimePicker  appStore={this.appStore}/>
           </Col>
+        </Row>
+        <Row>
+          {this.appStore.errorMsg ? <Alert color="danger">{this.appStore.errorMsg}</Alert> : null }
         </Row>
       </Container>
       </div>

@@ -34,6 +34,9 @@ export default class AppStore{
         max: 100
     }
 
+    @observable
+    errorMsg = null;
+
     @action
     setDisplayData(){
         this.displayData = [{name: "High", data: {}}, {name: "Low", data: {}}];
@@ -358,7 +361,9 @@ export default class AppStore{
     @action
     getChartData(){
         this.chartData = {};
+        this.errorMsg = null;
         // Loop through all Days in range
+
         for(let day of toJS(this.dayRange)){
             // Dynamicly Fetch data using APIXU
             fetch('http://api.apixu.com/v1/history.json?key=0cedbbf7880d4f52919145142182808&q='+this.currentLocation+'&dt='+day)
@@ -367,11 +372,16 @@ export default class AppStore{
                 })
                 .then(data => {
                     // Grab and reformat raw data
-                    var dayData = data.forecast.forecastday[0].day;
-                    this.chartData[day] = {high:{f: dayData.maxtemp_f, c: dayData.maxtemp_c}, low:{f: dayData.mintemp_f, c: dayData.mintemp_c},};
-                    
-                    // Determine data to be displayed (avoids many API calls)
-                    this.setDisplayData();
+                    if(data.error){
+                        this.errorMsg = data.error.message;
+                    }
+                    else{
+                        var dayData = data.forecast.forecastday[0].day;
+                        this.chartData[day] = {high:{f: dayData.maxtemp_f, c: dayData.maxtemp_c}, low:{f: dayData.mintemp_f, c: dayData.mintemp_c},};
+                        
+                        // Determine data to be displayed (avoids many API calls)
+                        this.setDisplayData();
+                    }
                 });
             }
     }
