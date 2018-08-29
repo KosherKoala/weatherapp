@@ -1,10 +1,10 @@
 Tools Used
-    React - UI
-    Mobx - DataLayer and state management
-    Bootstrap - UI/CSS
-    ChartKick - Chart.js Wrapper for react
-    Moment - Date calculator
-    Chartjs - Charts
+1. React - UI
+1.    Mobx - DataLayer and state management
+1.    Bootstrap - UI/CSS
+1.    ChartKick - Chart.js Wrapper for react
+1.    Moment - Date calculator
+1.    Chartjs - Chart Visuals
 
 
 Getting Started
