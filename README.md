@@ -16,4 +16,4 @@ Getting Started
 
 Testing
 
-I have limited experience with automated testing using tools like jest and enzyme, however I currently working on and excited to add it to my skillset. I did most of my testing manually, with each completed component would test the functionality of the previously creted components to ensure that they continued to work properly.
+1. I have limited experience with automated testing using tools like jest and enzyme, however I currently working on and excited to add it to my skillset. I did most of my testing manually, with each completed component would test the functionality of the previously creted components to ensure that they continued to work properly.
