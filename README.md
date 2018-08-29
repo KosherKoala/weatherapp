@@ -10,15 +10,13 @@ Tools Used
 Getting Started
 1. Clone Repo
 2. Install node modules    
-    run `npm intall` in /weatherapp
+    run `yarn install` in /weatherapp
 3. Start Dev Server  
-    `npm start` in /weatherapp
+    `yarn start` in /weatherapp
 
 Testing
 
-1. I have limited experience with automated testing using tools like jest and enzyme, however I currently working on and excited to add it to my skillset. 
-
-I did all of my testing manually and was as thourough as possible. With each completed component I would test the functionality of all previously created components to ensure that they continued to work properly.  
+1. I have limited experience with automated testing using tools like jest and enzyme, however I currently working on and excited to add it to my skillset. Testing is a very important part of my development process, so I performed extenive manual tests. With each completed component I would test the functionality of all previously created components to ensure that they continued to work properly.  
   
 Below are the manual tests I performed:
   
